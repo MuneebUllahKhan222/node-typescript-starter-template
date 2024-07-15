@@ -36,7 +36,8 @@ export const login = async (req: Request, res: Response): Promise<Object> => {
     const token = jwt.sign({id: user._id, role: user.role, email:user.email}, process.env.JWT_SECRET as string, {expiresIn: "12h"});
     const refreshToken = jwt.sign({id: user._id, role: user.role, email:user.email}, process.env.JWT_REFRESH_SECRET as string, {expiresIn: "1d"});
 
-    return res.status(200).json({message: "Login successful", token, refreshToken, user});
+    const {password: userPassword, ...rest } = user
+    return res.status(200).json({message: "Login successful", token, refreshToken, user: rest});
 };
 
 export const refreshTokenHandler = async (req: Request, res: Response): Promise<Object> => {

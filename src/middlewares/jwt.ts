@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken"
-import { getEnv } from "../utils/env.js";
 import { NextFunction, Request, Response } from "express";
+import { encodedToken } from "../types/auth.types";
 
-export interface AddingDecoded extends Request {
-  decoded?: any // or any other type
-}
+export interface DecodedRequest extends Request {
+  decoded: encodedToken // or any other type
+};
 
 
-let checkToken = (req:AddingDecoded, res: Response, next: NextFunction) => {
+let checkToken = (req:Request, res: Response, next: NextFunction) => {
   let token = req.headers["authorization"];
 
   if (token) {
@@ -20,7 +20,7 @@ let checkToken = (req:AddingDecoded, res: Response, next: NextFunction) => {
           message: "Token is not valid",
         });
       } else {
-        req.decoded = decoded;
+        (req as DecodedRequest).decoded = decoded as encodedToken;
         next();
       }
     });
@@ -31,7 +31,7 @@ let checkToken = (req:AddingDecoded, res: Response, next: NextFunction) => {
   }
 };
 
-export const checkResetToken = (req:AddingDecoded, res: Response, next: NextFunction) => {
+export const checkResetToken = (req:Request, res: Response, next: NextFunction) => {
   try {
     let token = req.headers["authorization"];
 
@@ -39,19 +39,21 @@ export const checkResetToken = (req:AddingDecoded, res: Response, next: NextFunc
     if (token.startsWith("Bearer ")) {
       token = token.slice(7, token.length);
     }
-    jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded:any) => {
+    jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
       if (err) {
         return res.status(401).json({
           message: "Token is not valid",
+          err: err
         });
       } else {
+        const decodedToken = decoded as encodedToken;
         const email = req.body.email;
-        if (email !== decoded.email) {
+        if (email !== decodedToken.email) {
           return res.status(401).json({
             message: "Token is not valid",
           });
         }
-        req.decoded = decoded;
+        (req as DecodedRequest).decoded = decodedToken;
         next();
       }
     });

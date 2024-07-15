@@ -4,10 +4,16 @@ export type signUpPayload = {
   lastName: string;
   email: string;
   password: string;
-  role?: string;
+  role: 'admin' | 'user';
 };
 
 export type loginPayload = {
   email: string;
   password: string;
 };
+
+export type encodedToken = {
+  id: string;
+  role: string;
+  email: string;
+}
