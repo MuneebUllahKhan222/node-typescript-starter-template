@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { DecodedRequest } from "../middlewares/jwt";
 import { User } from "../models/user.model";
 import getAuthUserId from "../utils/authUserId";
@@ -14,4 +14,9 @@ export const updateUser = async (req: DecodedRequest, res: Response): Promise<Ob
     user.lastName = lastName;
     await user.save();
     return res.status(200).json({message: "User updated successfully"});
-}
+};
+
+export const getUsers = async (_: Request, res: Response): Promise<Object> => {
+    const users = await User.find();
+    return res.status(200).json({users});
+};
