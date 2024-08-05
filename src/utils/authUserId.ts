@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request } from "express";
 
-const getAuthUserId = async (req:Request) => {
+const getAuthUserId = async (req:Request): Promise<string | null> => {
   let token: string =req.headers["authorization"]!;
   token = token?.split(" ")[1];
   const decoded:any = jwt.verify(token, process.env.JWT_SECRET as string);
