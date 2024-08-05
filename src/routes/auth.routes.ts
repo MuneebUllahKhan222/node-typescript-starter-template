@@ -1,30 +1,30 @@
 import express from "express";
 import { changePassword, login, refreshTokenHandler, signup } from "../controllers/auth.controller";
-import { changePasswordValidator, loginValidator, refreshTokenValidator, signUpValidator } from "../validators/auth.validator";
 import { validate } from "../validators";
 import checkToken from "../middlewares/jwt";
+import { authValidator } from "../validators/auth.validator";
 
 const authRoutes = express.Router();
 
 authRoutes.post("/signup",
-  signUpValidator(),
+  authValidator.signUpValidator(),
   validate,
   signup);
 
 authRoutes.post("/login",
-  loginValidator(),
+  authValidator.loginValidator(),
   validate,
   login);
 
 
 authRoutes.post("/change-password",
   checkToken,
-  changePasswordValidator(),
+  authValidator.changePasswordValidator(),
   validate,
   changePassword);
 
 authRoutes.post("/refresh",
-  refreshTokenValidator(),
+  authValidator.refreshTokenValidator(),
   validate,
   refreshTokenHandler);
 
